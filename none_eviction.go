@@ -13,13 +13,17 @@ func (n *NoneEvictionManager) Push(key string) int {
 }
 
 func (n *NoneEvictionManager) Pop() string {
-	currentHead := n.head
-	for currentHead.next.next != nil {
-		currentHead = currentHead.next
+	if n.head == nil {
+		return ""
 	}
-	n.tail = currentHead
-	currentHead.next = nil
-	return currentHead.value
+
+	currentHead := n.head
+	currentValueHead := currentHead.value
+	n.head = n.head.next
+	if n.head == nil {
+		n.tail = nil
+	}
+	return currentValueHead
 }
 
 func (n *NoneEvictionManager) Clear() int {

@@ -68,13 +68,11 @@ func (m *InMemoryCache) Values() []string {
 func (m *InMemoryCache) Add(key string, value string) (int, error) {
 	t := m.evictionManager.Push(key)
 
-	switch m.evictionManager.(type) {
-	case *NoneEvictionManager:
-		c := countNode(m.head)
-		if c+1 > m.Limit && t == 0 {
-			return 0, errors.New("key_limit_exceeded")
-		}
+	c := countNode(m.head)
+	if c+1 > m.Limit && t == 0 {
+		return 0, errors.New("key_limit_exceeded")
 	}
+
 	if t == 0 {
 		m.add(key, value)
 	} else {

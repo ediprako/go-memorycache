@@ -61,7 +61,24 @@ func (m *InMemoryCache) get(n *Node, key string) *Node {
 }
 
 func (m *InMemoryCache) Clear() int {
-	return 0
+	count := m.size
+	temp := m.head
+	for temp.next != nil {
+		temp = temp.next
+		temp.prev = nil
+		m.head = temp
+	}
+
+	m.head = nil
+
+	temp = m.tail
+	for temp.prev != nil {
+		temp = temp.prev
+		temp.next = nil
+		m.tail = temp
+	}
+	m.size = 0
+	return count
 }
 
 func (m *InMemoryCache) First() *Node {
@@ -95,9 +112,16 @@ func (m *InMemoryCache) Add(key string, value string) int {
 			for temp.next.next != nil {
 				temp = temp.next
 			}
+
 			temp.next = nil
-		} else {
-			m.size++
+
+			temp = m.tail
+			if temp.prev != nil {
+				temp = temp.prev
+				temp.next = nil
+				m.tail = temp
+			}
+			m.size--
 		}
 		m.add(key, value)
 		return t
@@ -143,4 +167,6 @@ func (m *InMemoryCache) add(key string, value string) {
 		n.prev = m.tail
 	}
 	m.tail = n
+
+	m.size++
 }

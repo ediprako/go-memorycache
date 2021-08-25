@@ -42,7 +42,26 @@ func get(head *Node, key string) string {
 }
 
 func (m *InMemoryCache) Clear() int {
-	return clearNode(m.tail)
+	var count int
+	temp := m.head
+	for temp.next != nil {
+		temp = temp.next
+		temp.prev = nil
+		m.head = temp
+		count++
+	}
+
+	m.head = nil
+	count++
+
+	temp = m.tail
+	for temp.prev != nil {
+		temp = temp.prev
+		temp.next = nil
+		m.tail = temp
+	}
+	m.tail = nil
+	return count
 }
 
 func (m *InMemoryCache) Keys() []string {
@@ -129,21 +148,6 @@ func countNode(head *Node) int {
 	var count int
 	for head != nil {
 		head = head.next
-		count++
-	}
-
-	return count
-}
-
-func clearNode(tail *Node) int {
-	var count int
-	for tail != nil {
-		tail = tail.prev
-
-		if tail != nil {
-			tail.next = nil
-		}
-
 		count++
 	}
 
